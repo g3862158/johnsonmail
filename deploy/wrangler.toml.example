@@ -1,0 +1,46 @@
+name = "johnsonmail"
+main = "./deploy-artifacts/worker.may24.js"
+compatibility_date = "2024-09-23"
+compatibility_flags = ["nodejs_compat"]
+keep_vars = true
+
+# IMPORTANT:
+# - Replace all example IDs and values before deploy.
+# - Store secrets with `wrangler secret put`, not in git.
+# - Verify assets carefully before any deploy that includes [assets].
+# - For Email Routing, configure Cloudflare rules separately.
+
+# [assets]
+# directory = "./frontend/dist"
+# binding = "ASSETS"
+# run_worker_first = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "replace-me"
+database_id = "replace-me"
+
+[[kv_namespaces]]
+binding = "KV"
+id = "replace-me"
+
+[vars]
+ADMIN_CONTACT = "admin"
+CREATE_ADDRESS_DEFAULT_DOMAIN_FIRST = false
+DEFAULT_LANG = "zh"
+DEFAULT_SEND_BALANCE = 0
+DISABLE_ANONYMOUS_USER_CREATE_EMAIL = true
+DISABLE_CUSTOM_ADDRESS_NAME = false
+DISABLE_SHOW_GITHUB = true
+ENABLE_CREATE_ADDRESS_SUBDOMAIN_MATCH = false
+ENABLE_USER_CREATE_EMAIL = true
+ENABLE_USER_DELETE_EMAIL = true
+MAX_ADDRESS_LEN = 30
+MIN_ADDRESS_LEN = 1
+PREFIX = ""
+TG_MAX_ADDRESS = 0
+TITLE = "Johnson Mail"
+# Example only:
+DEFAULT_DOMAINS = ["edu.example.com"]
+DOMAINS = ["edu.example.com"]
+RANDOM_SUBDOMAIN_DOMAINS = ["edu.example.com"]
