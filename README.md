@@ -7,7 +7,6 @@ This repository is a **sanitized open-source packaging** of the current Johnson 
 ## Status
 
 - Preserves the current mailbox web experience pattern used in production restoration work
-- Includes a deployable Worker artifact snapshot in `deploy-artifacts/worker.may24.js`
 - Includes the upstream source tree needed for deeper maintenance and future clean rebuilds
 - Excludes all live secrets, tokens, JWTs, private mailbox data, and operator-only notes
 
@@ -18,7 +17,7 @@ This project is based on the MIT-licensed upstream project:
 - Upstream: `dreamhunter2333/cloudflare_temp_email`
 - License: MIT
 
-Johnson Mail adds operator packaging, deployment notes, and a preserved artifact-first restoration workflow learned from production incident handling.
+Johnson Mail adds operator packaging, deployment notes, and a safer open-source packaging workflow learned from production incident handling.
 
 ## Repository Layout
 
@@ -27,7 +26,6 @@ Johnson Mail adds operator packaging, deployment notes, and a preserved artifact
 - `db/` – D1 schema and migrations
 - `mail-parser-wasm/` – Rust WASM mail parser
 - `smtp_proxy_server/` – Optional SMTP/IMAP proxy helpers
-- `deploy-artifacts/worker.may24.js` – preserved Worker artifact snapshot
 - `deploy/wrangler.toml.example` – sanitized deployment template
 
 ## Security / Privacy
@@ -50,9 +48,9 @@ Read:
 
 This codebase has one major operational pitfall:
 
-- **Production artifact behavior and source-tree behavior may differ.**
+- **Historical production behavior and source-tree behavior may differ.**
 
-If your goal is to restore a specific historical UI/behavior, do not assume a fresh upstream rebuild is identical. In previous incident recovery, the exact Cloudflare Worker artifact mattered more than the upstream source tree.
+If your goal is to restore a specific historical UI/behavior in your own deployment, do not assume a fresh rebuild is identical. Keep your own deployment history and rollback path.
 
 ## Deployment Notes
 
