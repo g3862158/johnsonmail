@@ -144,6 +144,98 @@ Minimum verification:
 - confirm UI shows the message
 - if Telegram enabled, confirm Telegram receives it
 
+
+## Common failure patterns to avoid
+
+These are not theoretical. They are recurring operational mistakes that waste time and cause regressions.
+
+### 1) Treating source rebuilds as the same thing as known-good production
+
+Do **not** assume that rebuilding the source tree reproduces a historical production deployment exactly.
+
+If the user wants:
+
+- a specific old UI,
+- a known-good behavior,
+- or “restore it to that version”,
+
+then the first move should be:
+
+1. identify the known-good deployed version or artifact,
+2. restore that baseline,
+3. only then apply the smallest necessary delta.
+
+### 2) Mixing multiple problem classes together
+
+Keep these concerns separate:
+
+- root web UI (`/`)
+- direct mailbox page (`/?jwt=...`)
+- mailbox/domain pool configuration
+- inbound delivery chain (Email Routing -> Worker -> DB -> API)
+- Telegram push / webhook delivery
+
+If these are mixed together, agents tend to “fix” one layer while breaking another and then lose the causal chain.
+
+### 3) Stacking hotfixes on top of a broken state
+
+Do **not** keep layering more changes onto a deployment that is already in a bad or ambiguous state.
+
+Preferred rule:
+
+1. stop,
+2. restore the last known-good deployment,
+3. change one thing,
+4. verify,
+5. only then continue.
+
+### 4) Assuming Email Routing matcher semantics without proof
+
+Do **not** assume a matcher value like `*@example.com` behaves as a wildcard unless the actual matcher type supports that behavior and you verified it.
+
+Safer debugging pattern:
+
+- first make one exact mailbox rule work,
+- then generalize only after proof.
+
+### 5) Declaring success after partial checks
+
+A deployment is **not fixed** just because:
+
+- homepage returns 200,
+- Worker deploy succeeded,
+- a config endpoint looks correct,
+- or one layer of the flow works.
+
+Success must be based on the full intended path.
+
+## Non-negotiable verification discipline
+
+After every meaningful change, verify the relevant end-to-end path.
+
+For a mailbox deployment, that usually means:
+
+1. `/` returns expected UI
+2. `/?jwt=...` returns expected mailbox view
+3. intended mailbox creation/access path works
+4. inbound email actually arrives
+5. parsed mail API returns it
+6. UI displays it
+7. Telegram/webhook push works if enabled
+
+If one item fails, do **not** report success.
+
+## Recovery mindset for agents
+
+When repeated attempts are happening, the agent should explicitly say:
+
+- what is currently known-good,
+- what is currently broken,
+- what single variable is being changed next,
+- and what exact verification will decide the next step.
+
+This is how to avoid endless guess-and-check loops.
+
 ## Recovery / rollback workflow
 
 If the deployment is broken:
