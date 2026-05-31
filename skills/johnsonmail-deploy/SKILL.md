@@ -145,6 +145,64 @@ Minimum verification:
 - if Telegram enabled, confirm Telegram receives it
 
 
+
+## Hard requirements for every update
+
+These are mandatory operating rules for this repository.
+
+### 1) Every update must carry a version trail
+
+After each meaningful change or deployment:
+
+- record or bump a version marker,
+- keep a clear changelog trail,
+- make rollback targets discoverable.
+
+Minimum expectation:
+
+- version identifier or deploy label,
+- what changed,
+- when it changed,
+- what the previous known-good version was.
+
+If the environment supports deploy versions, capture the deploy version id. If the repo uses release/version files, update them consistently.
+
+### 2) Every deployment must verify main functionality, not just the changed part
+
+Do **not** deploy changes by only checking the local diff or the newly modified path.
+
+Before calling the update successful, verify the main user-facing functionality still works.
+
+For Johnson Mail, main-function verification usually includes:
+
+1. homepage/root UI works
+2. direct mailbox page `/?jwt=...` works
+3. mailbox access/creation path still works under the intended auth model
+4. inbound email can still arrive
+5. parsed mail API still returns usable content
+6. if enabled, Telegram/webhook delivery still works
+
+If the change touched one area but broke the main flow, the deployment is not acceptable.
+
+### 3) Persist user preferences and learned constraints
+
+When a user expresses a repeatable preference, requirement, formatting rule, or operational lesson:
+
+- write it down,
+- do not rely on session memory,
+- update the relevant durable file or skill.
+
+Examples:
+
+- output formatting requirements
+- deployment safety rules
+- rollback discipline
+- verification requirements
+- domain/addition constraints
+- style or UX expectations
+
+This is part of adaptive agent behavior. Learning is not complete until it is persisted.
+
 ## Common failure patterns to avoid
 
 These are not theoretical. They are recurring operational mistakes that waste time and cause regressions.
