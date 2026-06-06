@@ -35,9 +35,9 @@ This repo is meant to be a cleaner public starting point for people who want to:
 
 ## Status
 
-- Preserves the current mailbox web experience pattern used in production restoration work
 - Includes the upstream source tree needed for deeper maintenance and future clean rebuilds
 - Excludes all live secrets, tokens, JWTs, private mailbox data, and operator-only notes
+- Does **not** define any single historical production UI as the repo-wide default target; environment-specific restore targets must be recorded in deployment-local baselines
 
 ## Provenance
 
@@ -57,6 +57,7 @@ Johnson Mail adds operator packaging, deployment notes, and a safer open-source 
 - `smtp_proxy_server/` – Optional SMTP/IMAP proxy helpers
 - `deploy/wrangler.toml.example` – sanitized deployment template
 - `skills/cf-temp-mail-agent-mail/` – agent-facing mailbox skill from the upstream project base
+- `ops/INTERFACE_SPEC.md` – canonical repo-wide interface specification
 
 ## Telegram / Bot / Webhook integration status
 
@@ -121,6 +122,8 @@ This codebase has one major operational pitfall:
 
 If your goal is to restore a specific historical UI/behavior in your own deployment, do not assume a fresh rebuild is identical. Keep your own deployment history and rollback path.
 
+Just as important: do **not** treat a repo-level UI description as the canonical target for every environment. If a production environment has a known-good historical mailbox UI, record that UI only in that environment's baseline/recovery document, not as a generic repo-wide interface promise.
+
 ## Deployment Notes
 
 1. Start from `deploy/wrangler.toml.example`
@@ -131,6 +134,14 @@ If your goal is to restore a specific historical UI/behavior in your own deploym
    - `/`
    - `/?jwt=...`
 6. Test real mail delivery end-to-end
+
+## Interface spec rule
+
+For repo-wide UI description, use only the canonical interface defined in:
+
+- `ops/INTERFACE_SPEC.md`
+
+Do not keep multiple competing default UI descriptions in deployment or recovery docs. Historical or compatibility UI variants should be labeled as such, not described as equal default targets.
 
 ## Recommended next step
 

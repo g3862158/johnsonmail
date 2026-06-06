@@ -94,3 +94,34 @@ If something breaks:
 - [ ] restore last known-good deployment first
 - [ ] then apply the smallest required fix
 - [ ] re-run the full verification checklist
+
+## 9. Frozen baseline / do-not-roll checklist
+
+For every real deployment environment, keep a **frozen known-good baseline** outside secrets but near operations docs.
+
+Recommended contents:
+
+- [ ] known-good deploy/version id
+- [ ] expected `/` markers
+- [ ] expected `/?jwt=...` markers
+- [ ] expected `/open_api/settings` values
+- [ ] expected domain arrays
+- [ ] rollback target
+- [ ] last verified timestamp
+
+When asked to restore a historical good state:
+
+- [ ] do **not** assume a fresh source rebuild is equivalent
+- [ ] do **not** use generic repo UI descriptions or the default frontend as the environment's restore target
+- [ ] restore the known-good deployment/artifact first
+- [ ] verify `/` and `/?jwt=...` separately
+- [ ] verify `/open_api/settings` separately
+- [ ] only then apply the requested small delta
+
+When asked to "keep current jwt UI, only patch settings":
+
+- [ ] preserve/mirror the currently working assets first
+- [ ] keep the current direct-mailbox Worker/UI path unchanged
+- [ ] patch only settings/domain vars
+- [ ] redeploy
+- [ ] re-check `/`, `/?jwt=...`, and `/open_api/settings`

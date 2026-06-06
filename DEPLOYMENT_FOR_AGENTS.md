@@ -51,6 +51,8 @@ After deployment, verify:
 6. If Telegram is enabled, the Telegram push path works end-to-end
 7. If webhook is enabled, webhook test / delivery works end-to-end
 
+For the repo-wide default UI description, refer to `ops/INTERFACE_SPEC.md` only. Do not create a second competing default interface description in recovery text.
+
 ## Known Telegram-related code surface
 
 The repository already includes:
@@ -65,6 +67,39 @@ The repository already includes:
 ## Known caveat
 
 Do not assume source-tree behavior always exactly matches a historical production deployment. If restoring an older production experience matters, keep your own rollback/version history.
+
+## Frozen baseline rule
+
+For any real environment, maintain a **known-good baseline document** and treat it as operational truth.
+
+Do **not** infer an environment's restore target UI from generic repo docs, feature lists, screenshots, or the current default source-tree frontend alone. Historical environment-specific mailbox UIs belong in that environment's baseline document, not in broad repo marketing or generic deployment text.
+
+That baseline should include:
+
+- the known-good deploy/version id
+- expected `/` behavior
+- expected `/?jwt=...` behavior
+- expected `/open_api/settings` output
+- expected domain arrays
+- rollback target
+
+When an operator says “restore the final good version”, agents should:
+
+1. recover the known-good deployment/artifact first
+2. verify `/`
+3. verify `/?jwt=...`
+4. verify `/open_api/settings`
+5. only then make the requested small change
+
+When an operator says “keep current jwt UI, only patch settings”, agents should:
+
+1. preserve/mirror the currently working assets first
+2. keep the current direct-mailbox UI path unchanged
+3. patch only settings/domain vars
+4. redeploy
+5. re-verify all three gates
+
+This rule exists to prevent rolling regressions where one layer looks fixed while another silently breaks.
 
 ## Recommendation
 

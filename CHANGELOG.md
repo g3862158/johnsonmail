@@ -10,6 +10,8 @@
 
 ### Features
 
+- docs: |部署恢复| 新增冻结基线 / do-not-roll 运行规则：在 `skills/johnsonmail-deploy/SKILL.md`、`DEPLOYMENT_CHECKLIST.md`、`DEPLOYMENT_FOR_AGENTS.md` 中明确要求为每个真实环境维护 known-good baseline，恢复历史好状态时先回已知好 deploy/artifact，再分别验证 `/`、`/?jwt=...`、`/open_api/settings`；同时新增 `ops/KNOWN_GOOD_BASELINE.example.md` 模板，规范“保持当前 jwt UI，只补 settings”这类高风险操作的固定顺序
+- docs: |界面规格| 新增 `ops/INTERFACE_SPEC.md` 作为仓库唯一的默认界面规格来源；默认规格收敛为当前 tabbed mailbox UI（地址管理 / 收件箱 / 账户 / 外观 / 过滤当前页 / 自动刷新），历史或兼容界面不再作为并列默认目标，只保留为兼容模式或环境基线说明
 - feat: |Frontend| 前端新增 6 国语言支持（`zh` / `en` / `es` / `pt-BR` / `ja` / `de`），默认语言保持为 `zh`；无 locale 前缀路由（如 `/`、`/user`）默认使用中文渲染，同时会记录浏览器语言作为语言偏好。用户手动切换后会持久化语言偏好，并保持当前页面路径、查询参数与 canonical locale URL 一致
 - feat: |API| 新增服务端解析邮件接口 `/api/parsed_mails` 与 `/api/parsed_mail/:id`，直接返回 `sender` / `subject` / `text` / `html` / `attachments` 元信息（复用 `commonParseMail`），AI agent 侧不再需要引入 MIME 解析器
 - feat: |Skill| 新增仓库内置只读 skill `cf-temp-mail-agent-mail`（`skills/cf-temp-mail-agent-mail/`），让 OpenClaw / Codex / Cursor 等 AI agent 凭用户提供的 Address JWT + API 地址读取邮箱、轮询验证码，绕开创建邮箱时的 Turnstile 人机验证；可通过 `npx degit dreamhunter2333/cloudflare_temp_email/skills/cf-temp-mail-agent-mail` 安装

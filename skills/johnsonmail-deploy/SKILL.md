@@ -203,6 +203,15 @@ Examples:
 
 This is part of adaptive agent behavior. Learning is not complete until it is persisted.
 
+## Interface-spec discipline
+
+For repo-wide UI expectations, use a single canonical interface spec.
+
+- Canonical spec file: `ops/INTERFACE_SPEC.md`
+- Do not keep multiple competing default UI descriptions across deployment/recovery docs
+- Historical UI variants or compatibility modes must be labeled as such
+- Presence of compatibility UI code does not make it the default restore target
+
 ## Common failure patterns to avoid
 
 These are not theoretical. They are recurring operational mistakes that waste time and cause regressions.
@@ -257,6 +266,78 @@ Safer debugging pattern:
 - then generalize only after proof.
 
 ### 5) Declaring success after partial checks
+
+Do **not** declare deployment or recovery success after checking only one layer.
+
+For mailbox deployments, partial success is common and misleading. Typical traps:
+
+- `/` looks fine but `/?jwt=...` is broken
+- settings/domain arrays are correct but UI regressed
+- UI works but inbound delivery is still broken
+- Telegram/webhook works but the web inbox path is blank or stale
+
+A deployment is not restored until all intended gates pass.
+
+## Frozen baseline / recovery checklist pattern
+
+For repos like Johnson Mail, operators should maintain a **frozen known-good baseline** for each production environment.
+
+That baseline should record at minimum:
+
+- the known-good deploy/version identifier
+- expected root-page behavior for `/`
+- expected direct-mailbox behavior for `/?jwt=...`
+- expected `/open_api/settings` values
+- any required asset markers
+- any required non-UI functional checks
+
+### What to do when asked to “restore the final known-good version”
+
+Before acting, apply this anti-conflict rule:
+
+- do **not** use generic repo UI descriptions, screenshots, or the current default frontend as proof of the environment's target interface
+- use the environment's frozen baseline instead
+- if no baseline exists, say the restore target is ambiguous before changing UI behavior
+
+Follow this order strictly:
+
+1. identify the known-good deployed version or artifact first
+2. restore that baseline first
+3. verify `/` and `/?jwt=...` separately
+4. verify `/open_api/settings` separately
+5. only then apply the smallest post-baseline delta the user actually asked for
+
+Do **not** freestyle a source rebuild first if the user is asking for a historical production experience.
+
+### What to do when the user says “keep the current jwt UI, only patch settings”
+
+Use this safe sequence:
+
+1. preserve or mirror the currently working production assets
+2. keep the current known-good direct-mailbox Worker/UI path unchanged
+3. patch only settings/domain vars
+4. redeploy
+5. re-verify `/`, `/?jwt=...`, and `/open_api/settings`
+
+This pattern exists because changing vars or assets casually can silently switch the visible UI, turn the site into a placeholder page, or break the mailbox URL path while making another layer look fixed.
+
+### Suggested repo-level baseline file
+
+For real operator use, keep a deployment-local, non-secret baseline record such as:
+
+- `ops/KNOWN_GOOD_BASELINE.example.md`
+- or `ops/ENVIRONMENT_RECOVERY_CHECKLIST.example.md`
+
+That file should be copied per environment and filled with:
+
+- environment name
+- worker version id / release id
+- expected domain arrays
+- expected UI markers for `/` and `/?jwt=...`
+- last verified timestamp
+- rollback target
+
+## Final reminder
 
 A deployment is **not fixed** just because:
 
